@@ -49,7 +49,7 @@ node "$COMET_STATE" check <name> archive
 运行归档脚本，自动完成以下全部步骤：
 
 ```bash
-node "$COMET_ARCHIVE" "<change-name>"
+node "$COMET_ARCHIVE" "<change-name>" --confirm-archive
 ```
 
 脚本自动执行：

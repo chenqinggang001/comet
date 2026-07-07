@@ -49,7 +49,7 @@ Only after the user selects "Confirm archive" may Step 2 continue. After the use
 Run the archive script to automatically complete all steps:
 
 ```bash
-node "$COMET_ARCHIVE" "<change-name>"
+node "$COMET_ARCHIVE" "<change-name>" --confirm-archive
 ```
 
 The script automatically executes:

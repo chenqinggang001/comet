@@ -2754,7 +2754,7 @@ describe('comet scripts', () => {
       ].join('\n'),
     );
 
-    const result = runNode(tmpDir, archiveScript, ['ready-to-archive'], {
+    const result = runNode(tmpDir, archiveScript, ['ready-to-archive', '--confirm-archive'], {
       COMET_OPENSPEC: command,
     });
 
@@ -2826,7 +2826,7 @@ describe('comet scripts', () => {
       ].join('\n'),
     );
 
-    const result = runNode(tmpDir, archiveScript, ['merge-delta-spec'], {
+    const result = runNode(tmpDir, archiveScript, ['merge-delta-spec', '--confirm-archive'], {
       COMET_OPENSPEC: command,
     });
     const mainSpec = await fs.readFile(
@@ -2871,7 +2871,7 @@ describe('comet scripts', () => {
     await writeFile(path.join(tmpDir, 'docs', 'superpowers', 'plans', 'utc-plan.md'), 'plan\n');
     await writeFile(path.join(tmpDir, 'docs', 'superpowers', 'reports', 'utc.md'), 'PASS\n');
 
-    const result = runNode(tmpDir, archiveScript, ['utc-archive-date'], {
+    const result = runNode(tmpDir, archiveScript, ['utc-archive-date', '--confirm-archive'], {
       COMET_OPENSPEC: command,
     });
     const design = await fs.readFile(

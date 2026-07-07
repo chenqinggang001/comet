@@ -206,7 +206,9 @@ async function verifyMainSpecsClean(): Promise<void> {
 export const classicArchiveCommand: ClassicCommandHandler = async (args) => {
   const output = new ArchiveOutput();
   const change = args[0];
-  const dryRun = args[1] === '--dry-run';
+  const flags = new Set(args.slice(1));
+  const dryRun = flags.has('--dry-run');
+  const confirmArchive = flags.has('--confirm-archive');
   try {
     validateChangeName(change);
     const activeDir = `openspec/changes/${change}`;
@@ -271,6 +273,11 @@ export const classicArchiveCommand: ClassicCommandHandler = async (args) => {
           pendingAction.ref === change);
       if (runtime.run.pending && runtime.run.pending !== actionId) {
         throw new ArchiveFailure(red(`FATAL: another action is pending: ${runtime.run.pending}`));
+      }
+      if (!recovering && !confirmArchive) {
+        throw new ArchiveFailure(
+          red('FATAL: mutating archive requires --confirm-archive after final user confirmation.'),
+        );
       }
 
       if (!recovering) {

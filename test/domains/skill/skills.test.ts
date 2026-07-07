@@ -753,6 +753,7 @@ describe('skills', () => {
       expect(zhArchive).toContain('「确认归档」');
       expect(zhArchive).toContain('「需要调整或重新验证」');
       expect(zhArchive).toContain('「暂不归档」');
+      expect(zhArchive).toContain('node "$COMET_ARCHIVE" "<change-name>" --confirm-archive');
       expect(zhArchive).toContain('`node "$COMET_STATE" transition <change-name> archive-reopen`');
       expect(zhVerify).toContain('不得因为验证已通过就自动归档');
       expect(zhHotfix).toContain(
@@ -1134,6 +1135,7 @@ describe('skills', () => {
       expect(enArchive).toContain('Confirm archive');
       expect(enArchive).toContain('Needs adjustment or re-verification');
       expect(enArchive).toContain('Do not archive yet');
+      expect(enArchive).toContain('node "$COMET_ARCHIVE" "<change-name>" --confirm-archive');
       expect(enArchive).toContain('`node "$COMET_STATE" transition <change-name> archive-reopen`');
       expect(enVerify).toContain('Must not automatically archive just because verification passed');
       expect(enHotfix).toContain(

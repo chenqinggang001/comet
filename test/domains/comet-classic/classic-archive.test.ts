@@ -117,12 +117,32 @@ describe('Classic archive command', () => {
     });
   });
 
+  it('rejects mutating archive without explicit confirmation flag', async () => {
+    const dir = await makeProject();
+    const changeDir = await seedArchiveChange(dir);
+    const fake = await fakeOpenSpec(dir, 'success');
+
+    const result = run(dir, ['archive', 'demo'], { COMET_OPENSPEC: fake.command });
+
+    expect(result.status).not.toBe(0);
+    expect(result.stderr).toContain('--confirm-archive');
+    await expect(fs.access(fake.log)).rejects.toMatchObject({ code: 'ENOENT' });
+    await expect(fs.access(changeDir)).resolves.toBeUndefined();
+    const state = parse(await fs.readFile(path.join(changeDir, '.comet.yaml'), 'utf8')) as Record<
+      string,
+      unknown
+    >;
+    expect(state.archived).toBe(false);
+  });
+
   it('archives a verified change and completes its Run transaction', async () => {
     const dir = await makeProject();
     await seedArchiveChange(dir);
     const fake = await fakeOpenSpec(dir, 'success');
 
-    const result = run(dir, ['archive', 'demo'], { COMET_OPENSPEC: fake.command });
+    const result = run(dir, ['archive', 'demo', '--confirm-archive'], {
+      COMET_OPENSPEC: fake.command,
+    });
 
     expect(result.status).toBe(0);
     expect(await fs.readFile(fake.log, 'utf8')).toBe('archive demo --yes\n');
@@ -161,7 +181,9 @@ describe('Classic archive command', () => {
     const dir = await makeProject();
     await seedArchiveChange(dir);
     const fake = await fakeOpenSpec(dir, 'success');
-    expect(run(dir, ['archive', 'demo'], { COMET_OPENSPEC: fake.command }).status).toBe(0);
+    expect(
+      run(dir, ['archive', 'demo', '--confirm-archive'], { COMET_OPENSPEC: fake.command }).status,
+    ).toBe(0);
     const archiveDir = path.join(
       dir,
       'openspec',
@@ -185,7 +207,9 @@ describe('Classic archive command', () => {
     const changeDir = await seedArchiveChange(dir);
     const fake = await fakeOpenSpec(dir, 'fail');
 
-    const result = run(dir, ['archive', 'demo'], { COMET_OPENSPEC: fake.command });
+    const result = run(dir, ['archive', 'demo', '--confirm-archive'], {
+      COMET_OPENSPEC: fake.command,
+    });
 
     expect(result.status).toBe(9);
     const state = parse(await fs.readFile(path.join(changeDir, '.comet.yaml'), 'utf8')) as Record<
@@ -205,7 +229,10 @@ describe('Classic archive command', () => {
     const dir = await makeProject();
     await seedArchiveChange(dir);
     const interrupted = await fakeOpenSpec(dir, 'move-fail');
-    expect(run(dir, ['archive', 'demo'], { COMET_OPENSPEC: interrupted.command }).status).toBe(9);
+    expect(
+      run(dir, ['archive', 'demo', '--confirm-archive'], { COMET_OPENSPEC: interrupted.command })
+        .status,
+    ).toBe(9);
     const logBeforeRetry = await fs.readFile(interrupted.log, 'utf8');
     const retry = await fakeOpenSpec(dir, 'success');
 
